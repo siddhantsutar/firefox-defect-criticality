@@ -9,7 +9,7 @@ Predict defect criticality of Mozilla Firefox bug reports/issues (major or minor
 * [Pandas](http://pandas.pydata.org/)
 
 ## Features
-* Gradient descent optimization with cross-entropy loss minimization for logistic regression model
+* Gradient descent optimization with cross-entropy minimization for logistic regression model
 * Adam optimization with softmax classification for multilayer perceptron model and recurrent neural network model
 * Early stopping (validation monitoring)
 
