@@ -15,7 +15,6 @@ def test(model):
 		pred = tf.get_collection('vars')[0]
 		x = tf.get_collection('vars')[1]
 		y = tf.get_collection('vars')[2]
-		print("Done")
 		correct_prediction = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
 		accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 		res = accuracy.eval({x: test_x, y: test_y})
@@ -30,7 +29,7 @@ def use(model, input_data):
 		#y = tf.get_collection('vars')[2]
 		features = np.array(create_feature_vector(input_data))
 		# Minor bug: [1,0], argmax: 0
-        # Major bug: [0,1], argmax: 1
+                # Major bug: [0,1], argmax: 1
 		result = (sess.run(tf.argmax(pred.eval(feed_dict={x: [features]}), 1)))
 		if result[0] == 0:
 			print('Minor bug:', input_data)
