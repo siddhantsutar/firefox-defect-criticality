@@ -1,8 +1,28 @@
+from collections import Counter
 import json
 import numpy as np
 import os
 import pathlib
 from shutil import copyfile
+
+def dimensionality_reduction(train_data, test_data, new_dimensions):
+    feature_count = Counter()
+    index_feature_train = {}
+    index_feature_test = {}
+    train_data = transpose_list(train_data)
+    test_data = transpose_list(test_data)
+    for i in range(len(train_data)):
+        feature_count[i] = train_data[i].count(1)
+        index_feature_train[i] = train_data[i]
+        index_feature_test[i] = test_data[i]
+    train_data = []
+    test_data = []
+    for each in feature_count.most_common(new_dimensions):
+        train_data.append(index_feature_train[each[0]])
+        test_data.append(index_feature_test[each[0]])
+    train_data = transpose_list(train_data)
+    test_data = transpose_list(test_data)
+    return train_data, test_data
 
 def duplicate_model(model_path):
 	existGDBPath = pathlib.Path(model_path)
@@ -43,3 +63,6 @@ def load_feature_sets(train=True):
         return data[0], data[1], data[2], data[3]
     else:
         return data[2], data[3]
+
+def transpose_list(data):
+    return list(map(list, zip(*data)))
