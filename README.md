@@ -14,6 +14,7 @@ Predict defect criticality of Mozilla Firefox bug reports/issues (major or minor
 * Early stopping (validation monitoring)
 
 ## Results
-* Logistic regression: 78.97%
-* Multilayer perceptron: 77.18%
-* Recurrent neural network (long short-term memory): **79.45%**
+* Logistic regression: 79.33%
+* Multilayer perceptron: 78.24%
+* Recurrent neural network (long short-term memory): 79.48%
+* Ensemble learning (majority polling): **79.53%**

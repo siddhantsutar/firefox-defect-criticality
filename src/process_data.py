@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from collections import Counter
 import json
 import nltk
@@ -8,13 +9,20 @@ import pandas as pd
 import random
 import string
 
+DATASET_FILE = "../data/firefox-dataset.csv"
+LEXICON_FILE = "../data/firefox-defect-criticality_lexicon.json"
+OUTPUT_FILE = '../data/firefox-defect-criticality_set.json'
+TOP_WORDS_PERCENTILE = 75
+
+
 def get_classification():
 	types = {"normal": [1,0], "minor": [1,0], "trivial": [1,0], "major": [0,1], "critical": [0,1]}
 	return types
 
+
 def create_feature_vector(sample, lexicon=None):
 	if lexicon is None:
-		with open("../data/firefox-defect-criticality_lexicon.json") as infile:
+		with open(LEXICON_FILE) as infile:
 			lexicon = json.load(infile)
 	features = np.zeros(len(lexicon))
 	words = word_tokenize(sample.lower())
@@ -22,6 +30,7 @@ def create_feature_vector(sample, lexicon=None):
 		if word.lower() in lexicon:
 			features[lexicon.index(word.lower())] += 1
 	return list(features)
+
 
 def create_feature_sets(filename, test_size=0.2):
 	classification = {}
@@ -39,6 +48,7 @@ def create_feature_sets(filename, test_size=0.2):
 	test_y = list(features[:,1][-testing_size:])
 	return train_x, train_y, test_x, test_y
 
+
 def create_lexicon(df):
 	lexicon = []
 	stop = set(stopwords.words('english') + list(string.punctuation))
@@ -49,11 +59,12 @@ def create_lexicon(df):
 				lexicon.append(i)
 	word_counts = Counter(lexicon)
 	counts = np.array(list(word_counts.values()))
-	r1 = np.percentile(counts, 75)
+	r1 = np.percentile(counts, TOP_WORDS_PERCENTILE)
 	lexicon = [word for word in word_counts if r1 <= word_counts[word]]
-	with open('../data/firefox-defect-criticality_lexicon.json', 'w') as outfile:
+	with open(LEXICON_FILE, 'w') as outfile:
 		json.dump(lexicon, outfile)
 	return lexicon
+
 
 def is_stopword(word):
 	if len(word) == 1:
@@ -73,6 +84,7 @@ def is_stopword(word):
 		return True
 	return False
 
+
 def sample_handling(sample, lexicon, classification):
 	feature_set = []
 	i = 0
@@ -83,7 +95,8 @@ def sample_handling(sample, lexicon, classification):
 			feature_set.append([features, classification[defect_type]])
 	return feature_set
 
+
 if __name__ == '__main__':
-	train_x, train_y, test_x, test_y = create_feature_sets("../data/firefox-dataset.csv")
-	with open('../data/firefox-defect-criticality_set.json', 'w') as outfile:
+	train_x, train_y, test_x, test_y = create_feature_sets(DATASET_FILE)
+	with open(OUTPUT_FILE, 'w') as outfile:
 		json.dump([train_x, train_y, test_x, test_y], outfile)
